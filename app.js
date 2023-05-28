@@ -11,7 +11,7 @@ const session = require('express-session');
 
 const mongoose = require('mongoose');
 //thay đổi CP17310 để đổi database <---------------------------------
-mongoose.connect('mongodb://127.0.0.1:27017/CP17310?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false', {
+mongoose.connect('mongodb://127.0.0.1:27017/AgileProject?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('Database Connected!')).catch(err => console.log('Database Error: ', err));
