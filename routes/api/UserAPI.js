@@ -3,14 +3,14 @@ const router = express.Router();
 const userModel = require('../models/UserModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const { validationRegister } = require('../../middle/Validation');
 
 router.post('/login', async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { userName, password } = req.body;
 
         // Tìm kiếm người dùng trong cơ sở dữ liệu
-        const user = await userModel.findOne({ username });
+        const user = await userModel.findOne({ userName });
 
         if (user) {
             // So sánh mật khẩu được cung cấp với mật khẩu đã được hash trong cơ sở dữ liệu
@@ -32,12 +32,12 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', [validationRegister], async (req, res, next) => {
     try {
-        const { fullname, username, password, email, phoneNumber } = req.body;
+        const { fullName, userName, password, email, phoneNumber } = req.body;
 
         // Kiểm tra xem tên người dùng hoặc email đã tồn tại trong cơ sở dữ liệu hay chưa
-        const existingUser = await userModel.findOne().or([{ username }, { email }]);
+        const existingUser = await userModel.findOne().or([{ userName }, { email }]);
         if (existingUser) {
             return res.status(409).json({ result: false, message: 'Username or email already exists' });
         }
@@ -46,7 +46,7 @@ router.post('/register', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Tạo người dùng mới
-        const newUser = new userModel({ fullname, username, password: hashedPassword, email, phoneNumber });
+        const newUser = new userModel({ fullName, userName, password: hashedPassword, email, phoneNumber });
         await newUser.save();
 
         return res.status(201).json({ result: true, message: 'User registered successfully' });
