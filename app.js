@@ -18,6 +18,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/AgileProject?readPreference=primary&
 
 // ***** Import model *****
 const UserAPI = require('./routes/api/UserAPI')
+const ReservationAPI = require('./routes/api/ReservationAPI')
 // ***** End import model *****
 
 // view engine setup
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // >>>>> Create link <<<<<
 app.use('/api/user', UserAPI)
+app.use('/api/reservation', ReservationAPI)
 // >>>>> End create link <<<<<
 
 // Tạo token
