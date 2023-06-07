@@ -4,6 +4,7 @@ const userModel = require('../models/UserModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationRegister } = require('../../middle/Validation');
+const { validationChangePassword } = require('../../middle/Validation');
 
 router.post('/login', async (req, res, next) => {
     try {
@@ -55,5 +56,31 @@ router.post('/register', [validationRegister], async (req, res, next) => {
     }
 });
 
+router.post('/change-password', [validationChangePassword], async (req, res, next) => {
+    try {
+        const { userName, currentPassword, newPassword } = req.body;
+
+        // Tìm kiếm người dùng trong cơ sở dữ liệu
+        const user = await userModel.findOne({ userName });
+
+        // So sánh mật khẩu hiện tại được cung cấp với mật khẩu đã được hash trong cơ sở dữ liệu
+        const isCurrentPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (isCurrentPasswordMatch) {
+            // Mã hóa mật khẩu mới trước khi lưu vào cơ sở dữ liệu
+            const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+            // Cập nhật mật khẩu mới cho người dùng
+            user.password = hashedNewPassword;
+            await user.save();
+
+            return res.status(200).json({ result: true, message: 'Password changed successfully' });
+        } else {
+            return res.status(401).json({ result: false, message: 'Incorrect current password' });
+        }
+    } catch (error) {
+        return res.status(500).json({ result: false, message: 'Internal server error' });
+    }
+});
 
 module.exports = router;
