@@ -10,7 +10,7 @@ var app = express();
 const session = require('express-session');
 
 const mongoose = require('mongoose');
-//thay đổi CP17310 để đổi database <---------------------------------
+//thay đổi AgileProject để đổi database <---------------------------------
 mongoose.connect('mongodb://127.0.0.1:27017/AgileProject?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false', {
   useNewUrlParser: true,
   useUnifiedTopology: true
